@@ -1,5 +1,13 @@
 # Constants
 INF = float('inf')
+WIDTH = 512
+HEIGHT = 384
+SAMPLES = 1
+MAGIC_NUMBER = 0.5135 # fov?
+CAMERA_POS = vector(50,52,295.6)
+CAMERA_DIR = normalize(vector(0,-0.042612,-1))
+CX = vector(WIDTH * MAGIC_NUMBER / HEIGHT)
+CY = mul(normalize(cross(CX, CAMERA_DIR)), MAGIC_NUMBER)
 
 # Vector arithmetic
 
@@ -134,3 +142,4 @@ spheres = [
 
 # Convert colors to displayable range
 # clamp and gamma correction here
+
