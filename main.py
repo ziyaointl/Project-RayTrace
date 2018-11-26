@@ -35,3 +35,23 @@ def origin(r):
 def direction(r):
     return r[1]
 
+# Sphere
+
+def sphere(r, p, emission, color, reflection):
+    return [r, p, emission, color, reflection]
+
+def radius(s):
+    return s[0]
+
+def center(s):
+    return s[1]
+
+def emission(s):
+    return s[2]
+
+def color(s):
+    return s[3]
+
+def reflection(s):
+    return s[4]
+
