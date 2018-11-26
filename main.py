@@ -1,21 +1,11 @@
 from random import random
-
-# Constants
-INF = float('inf')
-WIDTH = 512
-HEIGHT = 384
-SAMPLES = 1
-SUBSAMPLES = 2
-MAGIC_NUMBER = 0.5135 # fov?
-RAY_OFFSET = 140
-CAMERA_POS = vector(50,52,295.6)
-CAMERA_DIR = normalize(vector(0,-0.042612,-1))
-CX = vector(WIDTH * MAGIC_NUMBER / HEIGHT)
-CY = mul(normalize(cross(CX, CAMERA_DIR)), MAGIC_NUMBER)
+from turtle import *
+from tkinter import *
+from math import sin, sqrt
 
 # Vector arithmetic
 
-def vector(x=0, y=0, z=0):
+def vector(x=0.0, y=0.0, z=0.0):
     """
     >>> vector(1, 2, 3)
     [1, 2, 3]
@@ -97,6 +87,37 @@ def color(s):
 
 def reflection(s):
     return s[4]
+
+# Turtle graphics
+
+def init_canvas():
+    canvas = getcanvas()
+    image = PhotoImage(width=WIDTH, height=HEIGHT)
+    canvas.create_image((0, 0), image=image, state='normal')
+    bgcolor("#000000")
+    return image
+
+def pixel(x, y, color):
+    right, down = x, HEIGHT - y
+    scaled = tuple(int(x * 255) for x in color)
+    color = "#%02x%02x%02x" % scaled
+    IMAGE.put(color, (right, down))
+
+# Constants
+
+INF = float('inf')
+WIDTH = 512
+HEIGHT = 384
+SAMPLES = 1
+SUBSAMPLES = 2
+MAGIC_NUMBER = 0.5135 # fov?
+RAY_OFFSET = 140
+CAMERA_POS = vector(50,52,295.6)
+CAMERA_DIR = normalize(vector(0,-0.042612,-1))
+CX = vector(WIDTH * MAGIC_NUMBER / HEIGHT)
+CY = mul(normalize(cross(CX, CAMERA_DIR)), MAGIC_NUMBER)
+BLACK = vector()
+IMAGE = init_canvas()
 
 # Intersect
 
