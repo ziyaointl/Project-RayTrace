@@ -1,21 +1,49 @@
 # Vector arithmetic
 
 def vector(x, y, z):
+    """
+    >>> vector(1, 2, 3)
+    [1, 2, 3]
+    """
     return [x, y, z]
 
 def add(v1, v2):
-    return [v1[i] + v2[i] for i in range(3)]
+    """
+    >>> v1, v2 = vector(1, 2, 3), vector(4, 5, 6)
+    >>> add(v1, v2)
+    [5, 7, 9]
+    """
+    return [(v1[i] + v2[i]) for i in range(3)]
 
 def sub(v1, v2):
+    """
+    >>> v1, v2 = vector(1, 2, 3), vector(4, 5, 6)
+    >>> sub(v1, v2)
+    [-3, -3, -3]
+    """
     return [v1[i] - v2[i] for i in range(3)]
 
 def mul(v, x):
+    """
+    >>> v = vector(2, 5, 9)
+    >>> mul(v, 3)
+    [6, 15, 27]
+    """
     return [v[i] * x for i in range(3)]
 
 def dot(v1, v2):
+    """
+    >>> v1, v2 = vector(1, 2, 3), vector(10, 5, 6)
+    >>> dot(v1, v2)
+    38
+    """
     return sum([v1[i] * v2[i] for i in range(3)])
 
 def norm(v):
+    """
+    >>> norm(vector(2**0.5, 3, 5))
+    6.0
+    """
     return dot(v, v)**0.5
 
 def normalize(v):
