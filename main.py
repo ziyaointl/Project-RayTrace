@@ -146,9 +146,9 @@ def intersect_scene(r, scene):
     """
     final_t = INF
     index = -1
-    for i in range(scene.size()):
+    for i in range(len(scene)):
         t = intersect(r, scene[i])
-        if t < final_t:
+        if t < final_t and t > 0:
             final_t = t
             index = i
     return final_t, index
