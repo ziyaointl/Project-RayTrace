@@ -182,6 +182,7 @@ def render():
     """
     for y in range(HEIGHT):
         for x in range(WIDTH):
+            print(x, y)
             color = vector()
             for sy in range(SUBSAMPLES):
                 for sx in range(SUBSAMPLES):
@@ -197,7 +198,14 @@ def render():
                         d = normalize(d)
                         r = add(r, mul(radiance(ray(o, d), 0), 1/SAMPLES))
                     color = add(color, mul(r, 1/SUBSAMPLES**2)) # need to clamp r before adding
-            # write pixel to the screen
+            pixel(x, y, color)
+
 
 def radiance(r, depth, emissive=True):
-    return vector()
+    t, i = intersect_scene(r, spheres)
+    if (i == -1):
+        return BLACK
+    return color(spheres[i])
+
+render()
+exitonclick()
