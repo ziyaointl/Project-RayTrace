@@ -100,3 +100,17 @@ def intersect(r, s):
         if t > 0:
             return t
 
+# Scene
+
+spheres = [
+   sphere(1e5, vector( 1e5+1,40.8,81.6), vector(),vector(.75,.25,.25),'DIFF'), #Left
+   sphere(1e5, vector(-1e5+99,40.8,81.6),vector(),vector(.25,.25,.75),'DIFF'), #Rght 
+   sphere(1e5, vector(50,40.8, 1e5),     vector(),vector(.75,.75,.75),'DIFF'), #Back 
+   sphere(1e5, vector(50,40.8,-1e5+170), vector(),vector(),           'DIFF'), #Frnt 
+   sphere(1e5, vector(50, 1e5, 81.6),    vector(),vector(.75,.75,.75),'DIFF'), #Botm 
+   sphere(1e5, vector(50,-1e5+81.6,81.6),vector(),vector(.75,.75,.75),'DIFF'), #Top 
+   sphere(16.5,vector(27,16.5,47),       vector(),vector(1,1,1)*.999, 'SPEC'), #Mirr 
+   sphere(16.5,vector(73,16.5,78),       vector(),vector(1,1,1)*.999, 'REFR'), #Glas 
+   sphere(600, vector(50,681.6-.27,81.6),vector(12,12,12),  vector(), 'DIFF')  #Lite
+]
+
