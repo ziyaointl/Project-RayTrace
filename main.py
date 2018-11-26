@@ -1,3 +1,5 @@
+from random import random
+
 # Constants
 INF = float('inf')
 WIDTH = 512
@@ -5,6 +7,7 @@ HEIGHT = 384
 SAMPLES = 1
 SUBSAMPLES = 2
 MAGIC_NUMBER = 0.5135 # fov?
+RAY_OFFSET = 140
 CAMERA_POS = vector(50,52,295.6)
 CAMERA_DIR = normalize(vector(0,-0.042612,-1))
 CX = vector(WIDTH * MAGIC_NUMBER / HEIGHT)
@@ -150,3 +153,28 @@ def tent_filter(x):
         return x**0.5 -1
     return 1 - (2 - x)**0.5
 
+def render():
+    """
+    Produces the image
+    """
+    for y in range(HEIGHT):
+        for x in range(WIDTH):
+            color = vector()
+            for sy in range(SUBSAMPLES):
+                for sx in range(SUBSAMPLES):
+                    r = vector() # radiance
+                    for s in range(SAMPLES):
+                        dx = tent_filter(2 * random())
+                        dy = tent_filter(2 * random())
+                        x_ratio = (((sx + 0.5 + dx) / 2 + x) / WIDTH - 0.5)
+                        y_ratio = (((sy + 0.5 + dy) / 2 + y) / HEIGHT - 0.5)
+                        d = add(CAMERA_DIR, add(mul(CX, x_ratio), mul(CY, y_ratio)))
+                        
+                        o = add(CAMERA_POS, mul(d, RAY_OFFSET))
+                        d = normalize(d)
+                        r = add(r, mul(radiance(ray(o, d), 0), 1/SAMPLES))
+                    color = add(color, mul(r, 1/SUBSAMPLES**2)) # need to clamp r before adding
+            # write pixel to the screen
+
+def radiance(r, depth, emissive=True):
+    return vector()
