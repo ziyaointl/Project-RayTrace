@@ -128,13 +128,15 @@ def intersect(r, s):
     o_c = sub(origin(r), center(s))
     a = dot(direction(r), direction(r))
     b = 2 * dot(direction(r), o_c)
-    c = dot(o_c, o_c) - r * r 
+    c = dot(o_c, o_c) - radius(s)**2
     dis = (b * b) - (4 * a * c)
     if dis < 0:
         return 0
+    dis = dis**0.5
     for t in [(-b - dis) / (2 * a), (-b + dis) / (2 * a)]:
         if t > 0:
             return t
+    return 0
 
 def intersect_scene(r, scene):
     """
