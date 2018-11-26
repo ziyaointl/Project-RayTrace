@@ -1,3 +1,6 @@
+# Constants
+INF = float('inf')
+
 # Vector arithmetic
 
 def vector(x=0, y=0, z=0):
@@ -100,6 +103,21 @@ def intersect(r, s):
         if t > 0:
             return t
 
+def intersect_scene(r, scene):
+    """
+    Takes in a scene (a list of sphere) and a ray
+    Return t and the corresponding index of the closest sphere
+    If no sphere is found, return -1 as the index
+    """
+    final_t = INF
+    index = -1
+    for i in range(scene.size()):
+        t = intersect(r, scene[i])
+        if t < final_t:
+            final_t = t
+            index = i
+    return final_t, index
+
 # Scene
 
 spheres = [
@@ -114,3 +132,5 @@ spheres = [
    sphere(600, vector(50,681.6-.27,81.6),vector(12,12,12),  vector(), 'DIFF')  #Lite
 ]
 
+# Convert colors to displayable range
+# clamp and gamma correction here
