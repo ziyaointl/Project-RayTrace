@@ -1,6 +1,6 @@
 # Vector arithmetic
 
-def vector(x, y, z):
+def vector(x=0, y=0, z=0):
     """
     >>> vector(1, 2, 3)
     [1, 2, 3]
@@ -82,4 +82,21 @@ def color(s):
 
 def reflection(s):
     return s[4]
+
+# Intersect
+
+def intersect(r, s):
+    """
+    Takes in a ray and a sphere, returns t if intersects and 0 otherwise
+    """
+    o_c = sub(origin(r), center(s))
+    a = dot(direction(r), direction(r))
+    b = 2 * dot(direction(r), o_c)
+    c = dot(o_c, o_c) - r * r 
+    dis = (b * b) - (4 * a * c)
+    if dis < 0:
+        return 0
+    for t in [(-b - dis) / (2 * a), (-b + dis) / (2 * a)]:
+        if t > 0:
+            return t
 
