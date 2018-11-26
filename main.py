@@ -3,6 +3,7 @@ INF = float('inf')
 WIDTH = 512
 HEIGHT = 384
 SAMPLES = 1
+SUBSAMPLES = 2
 MAGIC_NUMBER = 0.5135 # fov?
 CAMERA_POS = vector(50,52,295.6)
 CAMERA_DIR = normalize(vector(0,-0.042612,-1))
@@ -142,4 +143,10 @@ spheres = [
 
 # Convert colors to displayable range
 # clamp and gamma correction here
+
+def tent_filter(x):
+    assert x >= 0 and x <= 2, "{} not in domain of tent filter".format(x)
+    if x < 1:
+        return x**0.5 -1
+    return 1 - (2 - x)**0.5
 
