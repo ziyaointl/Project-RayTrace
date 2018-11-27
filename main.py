@@ -2,6 +2,7 @@ from random import random
 from turtle import *
 from tkinter import *
 from math import sin, sqrt, pi, cos
+from multiprocessing import Pool
 
 # Vector arithmetic
 
@@ -189,8 +190,8 @@ def render():
     """
     Produces the image
     """
-    for y in range(100, HEIGHT - 100):
-        for x in range(100, WIDTH - 100):
+    for y in range(HEIGHT - 200):
+        for x in range(300, WIDTH):
             print(x, y)
             color = vector()
             for sy in range(SUBSAMPLES):
@@ -276,12 +277,50 @@ def radiance(r, depth, emissive=True):
                 dl = normalize(add(l1, add(l2, l3)))
 
                 # Shadow ray
-                shadow_t, shadow_i = intersect_scene(ray(intersection_p, dl), spheres)
+                _, shadow_i = intersect_scene(ray(intersection_p, dl), spheres)
                 if shadow_i != -1 and spheres[shadow_i] is l:
                     omega = 2 * pi * (1 - cos_a_max)
                     e = add(e, mul(weight(surface_color, mul(emission(l), dot(dl, nl) * omega)), 1/pi))
-        return add(add(emission(s), e), radiance(ray(intersection_p, d), depth - 1, 0))
-    return color(s)
+        self_emission = mul(emission(s), int(emissive))
+        more_bounces = weight(surface_color, radiance(ray(intersection_p, d), depth + 1, False))
+        return add(self_emission, add(more_bounces, e))
+    elif reflection(s) == 'SPEC':
+        new_d = sub(direction(r), mul(sphere_normal, 2 * dot(direction(r), sphere_normal)))
+        return add(emission(s), weight(surface_color, radiance(ray(intersection_p, new_d), depth + 1, True)))
+    # reflection(s) == 'REFR'
+    new_d = sub(direction(r), mul(sphere_normal, 2 * dot(direction(r), sphere_normal)))
+    refl_ray = ray(intersection_p, new_d)
+    into = dot(sphere_normal, nl)
+    nc = 1.0
+    nt = 1.5 # IOR for glass
+    nnt = nc/nt if into else nt/nc
+    ddn = dot(direction(r), nl)
+    cos2t = 1- nnt * nnt * (1- ddn * ddn)
+    if cos2t < 0: # total internal reflection
+        return add(emission(s), weight(surface_color, radiance(refl_ray, depth + 1, True)))
+    tdir = normalize(sub(mul(direction(r), nnt), mul(sphere_normal, ((1 if into else -1)*(ddn*nnt+sqrt(cos2t))))))
+    a=nt-nc
+    b=nt+nc
+    R0=a*a/(b*b) # reflectance at normal incidence
+    c = 1 - (-ddn if into else dot(tdir, sphere_normal))
+    Re = R0 + (1 - R0) * (c**5) # Fresnel reflectance
+    Tr = 1 - Re
+    P = .25 + .5 * Re
+    RP = Re / P
+    TP= Tr / (1 - P)
+    if depth > 2:
+        if random() < p:
+            rest = mul(radiance(refl_ray, depth + 1, True), RP)
+        else:
+            rest = mul(radiance(ray(intersection_p, tdir), depth + 1, True), TP)
+    else:
+        rest = (mul(radiance(refl_ray, depth + 1, True), Re) + 
+            mul(radiance(ray(intersection_p, tdir), depth + 1, True), Tr))
+    return add(emission(s), weight(surface_color, rest))
+
+# if __name__ == '__main__':
+#     with Pool() as pool:
+#         pool.map(render, range(HEIGHT))
 
 render()
 exitonclick()
