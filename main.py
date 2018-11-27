@@ -1,8 +1,9 @@
 from random import random
-from turtle import *
-from tkinter import *
+from imageio import imwrite
+import cv2
 from math import sin, sqrt, pi, cos
 from multiprocessing import Pool
+import numpy as np
 
 # Vector arithmetic
 
@@ -66,6 +67,9 @@ def normalize(v):
 def cross(v1, v2):
     return vector(v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0])
 
+def scale(color):
+    return [int(e * 255) for e in color]
+
 # Ray
 
 def ray(o, d):
@@ -97,26 +101,13 @@ def color(s):
 def reflection(s):
     return s[4]
 
-# Turtle graphics
-
-def init_canvas():
-    canvas = getcanvas()
-    image = PhotoImage(width=WIDTH, height=HEIGHT)
-    canvas.create_image((0, 0), image=image, state='normal')
-    bgcolor("#000000")
-    return image
-
-def pixel(x, y, color):
-    right, down = x, HEIGHT - y
-    scaled = tuple(int(x * 255) for x in color)
-    color = "#%02x%02x%02x" % scaled
-    IMAGE.put(color, (right, down))
-
 # Constants
 
 INF = float('inf')
 WIDTH = 512
 HEIGHT = 384
+CHANNELS = 3
+MAX_DEPTH = 10
 SAMPLES = 1
 SUBSAMPLES = 2
 MAGIC_NUMBER = 0.5135 # fov?
@@ -126,7 +117,11 @@ CAMERA_DIR = normalize(vector(0,-0.042612,-1))
 CX = vector(WIDTH * MAGIC_NUMBER / HEIGHT)
 CY = mul(normalize(cross(CX, CAMERA_DIR)), MAGIC_NUMBER)
 BLACK = vector()
-IMAGE = init_canvas()
+
+
+# Global
+
+img = np.zeros((HEIGHT, WIDTH, CHANNELS), dtype=np.uint8)
 
 # Intersect
 
@@ -185,30 +180,32 @@ def tent_filter(x):
         return x**0.5 -1
     return 1 - (2 - x)**0.5
 
-def render():
+def render(y):
     """
     Produces the image
     """
-    for y in range(HEIGHT - 200):
-        for x in range(300, WIDTH):
-            print(x, y)
-            color = vector()
-            for sy in range(SUBSAMPLES):
-                for sx in range(SUBSAMPLES):
-                    r = vector() # radiance
-                    for s in range(SAMPLES):
-                        dx = tent_filter(2 * random())
-                        dy = tent_filter(2 * random())
-                        x_ratio = (((sx + 0.5 + dx) / 2 + x) / WIDTH - 0.5)
-                        y_ratio = (((sy + 0.5 + dy) / 2 + y) / HEIGHT - 0.5)
-                        d = add(CAMERA_DIR, add(mul(CX, x_ratio), mul(CY, y_ratio)))
-                        
-                        o = add(CAMERA_POS, mul(d, RAY_OFFSET))
-                        d = normalize(d)
-                        r = add(r, mul(radiance(ray(o, d), 0), 1/SAMPLES))
-                    r = vector(clamp(r[0]), clamp(r[1]), clamp(r[2]))
-                    color = add(color, mul(r, 1/SUBSAMPLES**2)) # need to clamp r before adding
-            pixel(x, y, color)
+    print('Rendering row: {}'.format(y))
+    row = []
+    for x in range(WIDTH):
+        # print(x, y)
+        color = vector()
+        for sy in range(SUBSAMPLES):
+            for sx in range(SUBSAMPLES):
+                r = vector() # radiance
+                for s in range(SAMPLES):
+                    dx = tent_filter(2 * random())
+                    dy = tent_filter(2 * random())
+                    x_ratio = (((sx + 0.5 + dx) / 2 + x) / WIDTH - 0.5)
+                    y_ratio = (((sy + 0.5 + dy) / 2 + y) / HEIGHT - 0.5)
+                    d = add(CAMERA_DIR, add(mul(CX, x_ratio), mul(CY, y_ratio)))
+                    
+                    o = add(CAMERA_POS, mul(d, RAY_OFFSET))
+                    d = normalize(d)
+                    r = add(r, mul(radiance(ray(o, d), 0), 1/SAMPLES))
+                r = vector(clamp(r[0]), clamp(r[1]), clamp(r[2]))
+                color = add(color, mul(r, 1/SUBSAMPLES**2)) # need to clamp r before adding
+        row.append([x, y, scale(color)])
+    return row
 
 def orthonormal_basis(w):
     """
@@ -228,7 +225,7 @@ def clamp(x):
 
 def radiance(r, depth, emissive=True):
     t, i = intersect_scene(r, spheres)
-    if i == -1 or depth > 10:
+    if i == -1 or depth > MAX_DEPTH:
         return BLACK
     # Constant shading: for testing purposes only
     # return color(spheres[i])
@@ -317,9 +314,22 @@ def radiance(r, depth, emissive=True):
             mul(radiance(ray(intersection_p, tdir), depth + 1, True), Tr))
     return add(emission(s), weight(surface_color, rest))
 
-# if __name__ == '__main__':
-#     with Pool() as pool:
-#         pool.map(render, range(HEIGHT))
+if __name__ == '__main__':
+    with Pool() as pool:
+        rows = pool.map(render, range(HEIGHT))
+    print('dumping')
+    for r in rows:
+        for p in r:
+            try:
+                right, down = WIDTH - p[0] - 1, HEIGHT - p[1] - 1
+                img[down][right][0] = p[2][0]
+                img[down][right][1] = p[2][1]
+                img[down][right][2] = p[2][2]
+            except IndexError:
+                print(p)
 
-render()
-exitonclick()
+cv2.imshow('img', img)
+cv2.waitKey()
+
+# Save the image
+imwrite("image.png", img)
