@@ -123,7 +123,6 @@ MAGIC_NUMBER = 0.5135 # fov?
 RAY_OFFSET = 140
 CAMERA_POS = vector(50,52,295.6)
 CAMERA_DIR = normalize(vector(0,-0.042612,-1))
-MAX_DEPTH = 10
 CX = vector(WIDTH * MAGIC_NUMBER / HEIGHT)
 CY = mul(normalize(cross(CX, CAMERA_DIR)), MAGIC_NUMBER)
 BLACK = vector()
@@ -314,7 +313,7 @@ def radiance(r, depth, emissive=True):
         else:
             rest = mul(radiance(ray(intersection_p, tdir), depth + 1, True), TP)
     else:
-        rest = (mul(radiance(refl_ray, depth + 1, True), Re) + 
+        rest = add(mul(radiance(refl_ray, depth + 1, True), Re),
             mul(radiance(ray(intersection_p, tdir), depth + 1, True), Tr))
     return add(emission(s), weight(surface_color, rest))
 
