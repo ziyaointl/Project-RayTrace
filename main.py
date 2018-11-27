@@ -117,6 +117,7 @@ CAMERA_DIR = normalize(vector(0,-0.042612,-1))
 CX = vector(WIDTH * MAGIC_NUMBER / HEIGHT)
 CY = mul(normalize(cross(CX, CAMERA_DIR)), MAGIC_NUMBER)
 BLACK = vector()
+FUDGE = 1e-4
 
 
 # Global
@@ -138,7 +139,7 @@ def intersect(r, s):
         return 0
     dis = dis**0.5
     for t in [(-b - dis) / (2 * a), (-b + dis) / (2 * a)]:
-        if t > 0:
+        if t > FUDGE:
             return t
     return 0
 
@@ -152,7 +153,7 @@ def intersect_scene(r, scene):
     index = -1
     for i in range(len(scene)):
         t = intersect(r, scene[i])
-        if t < final_t and t > 0:
+        if t < final_t:
             final_t = t
             index = i
     return final_t, index
