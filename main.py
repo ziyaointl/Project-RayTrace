@@ -1,6 +1,6 @@
 from random import random
 from imageio import imwrite
-import cv2
+# import cv2
 from math import sin, sqrt, pi, cos
 from multiprocessing import Pool
 import numpy as np
@@ -108,7 +108,7 @@ WIDTH = 512
 HEIGHT = 384
 CHANNELS = 3
 MAX_DEPTH = 10
-SAMPLES = 1
+SAMPLES = 8
 SUBSAMPLES = 2
 MAGIC_NUMBER = 0.5135 # fov?
 RAY_OFFSET = 140
@@ -153,7 +153,7 @@ def intersect_scene(r, scene):
     index = -1
     for i in range(len(scene)):
         t = intersect(r, scene[i])
-        if t < final_t:
+        if t < final_t and t > 0:
             final_t = t
             index = i
     return final_t, index
@@ -329,8 +329,8 @@ if __name__ == '__main__':
             except IndexError:
                 print(p)
 
-cv2.imshow('img', img)
-cv2.waitKey()
+# cv2.imshow('img', img)
+# cv2.waitKey()
 
 # Save the image
 imwrite("image.png", img)
