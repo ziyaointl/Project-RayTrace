@@ -261,7 +261,7 @@ def radiance(r, depth, emissive=True):
                 # Create random direction towards the light
                 sw, su, sv = orthonormal_basis(sub(center(l), intersection_p))
                 x_sp = sub(intersection_p, center(l))
-                cos_a_max = sqrt(1 - (radius(l)**2 / dot(x_sp, x_sp)))
+                cos_a_max = sqrt(1 - radius(l)**2 / dot(x_sp, x_sp))
                 eps1, eps2 = random(), random()
                 cos_a = 1 - eps1 + eps1 * cos_a_max
                 sin_a = sqrt(1 - cos_a**2)
@@ -286,7 +286,7 @@ def radiance(r, depth, emissive=True):
     # reflection(s) == 'REFR'
     new_d = sub(direction(r), mul(sphere_normal, 2 * dot(direction(r), sphere_normal)))
     refl_ray = ray(intersection_p, new_d)
-    into = dot(sphere_normal, nl)
+    into = dot(sphere_normal, nl) > 0
     nc = 1.0
     nt = 1.5 # IOR for glass
     nnt = nc/nt if into else nt/nc
