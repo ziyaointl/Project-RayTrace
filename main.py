@@ -68,7 +68,7 @@ def cross(v1, v2):
     return vector(v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0])
 
 def scale(color):
-    return [int(e * 255) for e in color]
+    return [int((clamp(e)**(1/2.2))*255+0.5) for e in color]
 
 # Ray
 
@@ -107,8 +107,8 @@ INF = float('inf')
 WIDTH = 512
 HEIGHT = 384
 CHANNELS = 3
-MAX_DEPTH = 1
-SAMPLES = 1
+MAX_DEPTH = 10
+SAMPLES = 16
 SUBSAMPLES = 2
 MAGIC_NUMBER = 0.5135 # fov?
 RAY_OFFSET = 140
@@ -161,14 +161,14 @@ def intersect_scene(r, scene):
 # Scene
 
 spheres = [
-   sphere(1e5, vector( 1e5+1,40.8,81.6), vector(),vector(.75,.25,.25),'DIFF'), #Left
-   sphere(1e5, vector(-1e5+99,40.8,81.6),vector(),vector(.25,.25,.75),'DIFF'), #Rght 
+   sphere(1e5, vector( 1e5+1,40.8,81.6), vector(),vector(.75,.75,.75),'DIFF'), #Left
+   sphere(1e5, vector(-1e5+99,40.8,81.6),vector(),vector(.75,.75,.75),'DIFF'), #Rght 
    sphere(1e5, vector(50,40.8, 1e5),     vector(),vector(.75,.75,.75),'DIFF'), #Back 
-   sphere(1e5, vector(50,40.8,-1e5+170), vector(),vector(),           'DIFF'), #Frnt 
+   sphere(1e5, vector(50,40.8,-1e5+170), vector(),vector(0.5294, 0.8078, 0.9216),'DIFF'), #Frnt 
    sphere(1e5, vector(50, 1e5, 81.6),    vector(),vector(.75,.75,.75),'DIFF'), #Botm 
    sphere(1e5, vector(50,-1e5+81.6,81.6),vector(),vector(.75,.75,.75),'DIFF'), #Top 
-   sphere(16.5,vector(27,16.5,47),       vector(),mul(vector(1,1,1), .999), 'SPEC'), #Mirr 
-   sphere(16.5,vector(73,16.5,78),       vector(),mul(vector(1,1,1), .999), 'REFR'), #Glas 
+   sphere(16.5,vector(27,45.5,47),       vector(),mul(vector(1,1,1), .999), 'REFR'), #Glas 
+   sphere(16.5,vector(73,30,78),       vector(),mul(vector(1,1,1), .999), 'REFR'), #Glas 
    sphere(1.5, vector(50,81.6-16.5,81.6),vector(400,400,400),  vector(), 'DIFF')  #Lite
 ]
 
