@@ -124,6 +124,39 @@
 (define scene (cons (sphere 16.5 (vector 73 30 78) (vector 0 0 0) (mul (vector 1 1 1) .999) 'REFR) scene))
 (define scene (cons (sphere 1.5 (vector 50 65.1 81.6)  (vector 400 400 400) (vector 0 0 0)  'DIFF) scene))
 
+;;; Intersect
+
+(define (intersect r s)
+  (define o_c (sub (origin r) (center s)))
+  (define a (dot (direction r) (direction r)))
+  (define b (* 2 (dot o_c (direction r))))
+  (define c (- (dot o_c o_c) (expt (radius s) 2)))
+  (define dis (- (* b b) (* 4 a c)))
+  (if (< dis 0)
+    0
+    (begin
+      (define dis (expt dis 0.5))
+      (cond ((> (/ (- (- b) dis) (* 2 a)) FUDGE) (/ (- (- b) dis) (* 2 a)))
+        ((> (/ (+ (- b) dis) (* 2 a)) FUDGE) (/ (+ (- b) dis) (* 2 a)))
+        (else 0)
+      )
+    )
+  )
+)
+
+(define (intersect_scene r scene)
+  (define final_t inf)
+  (define (helper final_t obj scene)
+    (if (null? scene)
+      (list final_t obj)
+      (define t (intersect r (car scene)))
+      (if (and (< t final_t) (> t 0))
+        (helper t (car scene) (cdr scene))
+      )
+    )
+  )
+  (helper 0 '() scene)
+)
 
 (define (draw)
   
