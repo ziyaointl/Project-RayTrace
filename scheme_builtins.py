@@ -537,3 +537,10 @@ def tscheme_screen_width():
 def tscheme_screen_height():
     """Screen height in pixels of the current size (default 1)."""
     return turtle.getcanvas().winfo_height() // tscheme_pixel.size
+
+##
+## Custom
+##
+@builtin("inf")
+def inf():
+    return float('inf')

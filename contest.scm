@@ -109,6 +109,21 @@
 (define RAY_OFFSET 140)
 (define BLACK (vector 0 0 0))
 (define FUDGE 1e-4)
+(define INF (inf))
+
+;;; Scene
+
+(define scene ())
+(define scene (cons (sphere 1e5 (vector (+ 1e5 1) 40.8 81.6) (vector 0 0 0) (vector .75 .75 .75) 'DIFF) scene))
+(define scene (cons (sphere 1e5 (vector (+ 99 (- 1e5)) 40.8 81.6) (vector 0 0 0) (vector .75 .75 .75) 'DIFF) scene))
+(define scene (cons (sphere 1e5 (vector 50 40.8 1e5) (vector 0 0 0) (vector .75 .75 .75) 'DIFF) scene))
+(define scene (cons (sphere 1e5 (vector 50 40.8 (+ 170 (- 1e5))) (vector 0 0 0)  (vector 0.5294 0.8078 0.9216) 'DIFF) scene))
+(define scene (cons (sphere 1e5 (vector 50 1e5 81.6) (vector 0 0 0) (vector .75 .75 .75) 'DIFF) scene))
+(define scene (cons (sphere 1e5 (vector 50 (+ 81.6 (- 1e5)) 81.6)  (vector 0 0 0)  (vector .75 .75 .75) 'DIFF) scene))
+(define scene (cons (sphere 16.5 (vector 27 45.5 47) (vector 0 0 0) (mul (vector 1 1 1) .999) 'REFR) scene))
+(define scene (cons (sphere 16.5 (vector 73 30 78) (vector 0 0 0) (mul (vector 1 1 1) .999) 'REFR) scene))
+(define scene (cons (sphere 1.5 (vector 50 65.1 81.6)  (vector 400 400 400) (vector 0 0 0)  'DIFF) scene))
+
 
 (define (draw)
   
