@@ -108,7 +108,7 @@ WIDTH = 512
 HEIGHT = 384
 CHANNELS = 3
 MAX_DEPTH = 10
-SAMPLES = 1
+SAMPLES = 16
 SUBSAMPLES = 2
 MAGIC_NUMBER = 0.5135 # fov?
 RAY_OFFSET = 140
@@ -160,25 +160,17 @@ def intersect_scene(r, scene):
 
 # Scene
 
-spheres = [#Scene: radius, position, emission, color, material
-		  
-		  sphere(80, vector(-10,200,-400), vector(100,100,50), vector(0,0,0), 'DIFF'),	# sun
-		  sphere(30, vector(140,120,-450), vector(0,0,0), vector(.8,.8,.8), 'DIFF'),	# cloud
-		  sphere(20, vector(170,115,-440), vector(0,0,0), vector(.8,.8,.8), 'DIFF'),	# cloud
-		  sphere(20, vector(110,115,-430), vector(0,0,0), vector(.8,.8,.8), 'DIFF'),	# cloud
-		  
-		  sphere(1e5, vector(80,-1e5,0), vector(0,0,0), vector(.02,.15,.01), 'DIFF'),	# ground
-		  
-		  #sphere(5e2, vector(300,-5e2+35,-500), vector(0,0,0), vector(.3,.3,.3), 'DIFF'),
-		  #*
-		  sphere(1e5, vector(0   , 1e4,  1e5), vector(.7,.9,1), vector(0,0,0), 'DIFF'),	# sky
-		  sphere(1e5, vector(0   , 1e4, -1e5), vector(.7,.9,1), vector(0,0,0), 'DIFF'),
-		  sphere(1e5, vector(-1e5, 1e4,    0), vector(.7,.9,1), vector(0,0,0), 'DIFF'),
-		  sphere(1e5, vector( 1e5, 1e4,    0), vector(.7,.9,1), vector(0,0,0), 'DIFF'),
-
-          sphere(16.5,vector(27,45.5,47),       vector(),mul(vector(1,1,1), .999), 'REFR'), #Glas
-          sphere(16.5,vector(73,30,78),       vector(),mul(vector(1,1,1), .999), 'REFR') #Glas
-		]
+spheres = [
+   sphere(1e5, vector( 1e5+1,40.8,81.6), vector(),vector(.75,.75,.75),'DIFF'), #Left
+   sphere(1e5, vector(-1e5+99,40.8,81.6),vector(),vector(.75,.75,.75),'DIFF'), #Rght 
+   sphere(1e5, vector(50,40.8, 1e5),     vector(),vector(.75,.75,.75),'DIFF'), #Back 
+   sphere(1e5, vector(50,40.8,-1e5+170), vector(),vector(0.5294, 0.8078, 0.9216),'DIFF'), #Frnt 
+   sphere(1e5, vector(50, 1e5, 81.6),    vector(),vector(.75,.75,.75),'DIFF'), #Botm 
+   sphere(1e5, vector(50,-1e5+81.6,81.6),vector(),vector(.75,.75,.75),'DIFF'), #Top 
+   sphere(16.5,vector(27,45.5,47),       vector(),mul(vector(1,1,1), .999), 'REFR'), #Glas 
+   sphere(16.5,vector(73,30,78),       vector(),mul(vector(1,1,1), .999), 'REFR'), #Glas 
+   sphere(1.5, vector(50,81.6-16.5,81.6),vector(400,400,400),  vector(), 'DIFF')  #Lite
+]
 
 # Convert colors to displayable range
 # clamp and gamma correction here
