@@ -107,8 +107,8 @@ INF = float('inf')
 WIDTH = 512
 HEIGHT = 384
 CHANNELS = 3
-MAX_DEPTH = 10
-SAMPLES = 8
+MAX_DEPTH = 1
+SAMPLES = 1
 SUBSAMPLES = 2
 MAGIC_NUMBER = 0.5135 # fov?
 RAY_OFFSET = 140
@@ -169,7 +169,7 @@ spheres = [
    sphere(1e5, vector(50,-1e5+81.6,81.6),vector(),vector(.75,.75,.75),'DIFF'), #Top 
    sphere(16.5,vector(27,16.5,47),       vector(),mul(vector(1,1,1), .999), 'SPEC'), #Mirr 
    sphere(16.5,vector(73,16.5,78),       vector(),mul(vector(1,1,1), .999), 'REFR'), #Glas 
-   sphere(600, vector(50,681.6-.27,81.6),vector(12,12,12),  vector(), 'DIFF')  #Lite
+   sphere(1.5, vector(50,81.6-16.5,81.6),vector(400,400,400),  vector(), 'DIFF')  #Lite
 ]
 
 # Convert colors to displayable range
