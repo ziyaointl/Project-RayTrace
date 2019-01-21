@@ -1,6 +1,5 @@
 from random import random
 from imageio import imwrite
-# import cv2
 from math import sin, sqrt, pi, cos
 from multiprocessing import Pool
 import numpy as np
@@ -108,7 +107,7 @@ WIDTH = 512
 HEIGHT = 384
 CHANNELS = 3
 MAX_DEPTH = 10
-SAMPLES = 16
+SAMPLES = 1
 SUBSAMPLES = 2
 MAGIC_NUMBER = 0.5135 # fov?
 RAY_OFFSET = 140
@@ -328,9 +327,6 @@ if __name__ == '__main__':
                 img[down][right][2] = p[2][2]
             except IndexError:
                 print(p)
-
-# cv2.imshow('img', img)
-# cv2.waitKey()
 
 # Save the image
 imwrite("image.png", img)
