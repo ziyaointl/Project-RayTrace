@@ -172,7 +172,7 @@ spheres = [
 ]
 
 # Convert colors to displayable range
-# clamp and gamma correction here
+# gamma correction here
 
 def tent_filter(x):
     assert x >= 0 and x <= 2, "{} not in domain of tent filter".format(x)
@@ -223,6 +223,16 @@ def clamp(x):
         return 1
     return x
 
+def sample_unit_hemisphere(normal):
+    r1, r2 = random(), random()
+    phi = 2 * pi * r1
+    r2_sqrt = sqrt(r2)
+    w, u, v = orthonormal_basis(normal)
+    d1 = mul(mul(u, cos(phi)), r2_sqrt)
+    d2 = mul(mul(v, sin(phi)), r2_sqrt)
+    d3 = mul(w, sqrt(1 - r2))
+    return normalize(add(d1, add(d2, d3)))
+
 def radiance(r, depth, emissive=True):
     t, i = intersect_scene(r, spheres)
     if i == -1 or depth > MAX_DEPTH:
@@ -243,17 +253,7 @@ def radiance(r, depth, emissive=True):
         else:
             return mul(emission(s), int(emissive))
     if reflection(s) == 'DIFF':
-        r1 = 2 * pi * random() # random angle
-        r2 = random()
-        r2s = sqrt(r2) # random distance
-        # Create orthonormal coordinate frame
-        w, u, v = orthonormal_basis(nl.copy())
-        # Create random direction
-        d1 = mul(mul(u, cos(r1)), r2s)
-        d2 = mul(mul(v, sin(r1)), r2s)
-        d3 = mul(w, sqrt(1 - r2))
-        d = normalize(add(d1, add(d2, d3)))
-
+        d = sample_unit_hemisphere(nl.copy())
         # Sample lights
         e = vector()
         for l in spheres:
