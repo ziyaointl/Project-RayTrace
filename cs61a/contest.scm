@@ -2,11 +2,11 @@
 ;;;
 ;;; Please do not include your name or personal info in this file.
 ;;;
-;;; Title: Random
+;;; Title: rand()
 ;;;
 ;;; Description:
 ;;;    If I could use Monte Carlo on a test
-;;;    I can approximate anything
+;;;    I would approximate everything
 ;;;    By guessing a bajillion times
 
 ;;; Vector
@@ -17,6 +17,14 @@
 
 (define (caddr lst)
   (car (cdr (cdr lst)))
+)
+
+(define (cadddr lst)
+  (car (cdr (cdr (cdr lst))))
+)
+
+(define (cddddr lst)
+  (cdr (cdr (cdr (cdr lst))))
 )
 
 (define (vector x y z)
@@ -77,7 +85,7 @@
   (car s)
 )
 
-(define (position s)
+(define (center s)
   (cadr s)
 )
 
@@ -99,7 +107,6 @@
 (define CHANNELS 3)
 (define MAX_DEPTH 10)
 (define SAMPELS 16)
-(define SUBSAMPLES 2)
 (define MAGIC_NUMBER 0.5135)
 (define RAY_OFFSET 140)
 (define CAMERA_POS (vector 50 52 295.6))
@@ -110,6 +117,7 @@
 (define BLACK (vector 0 0 0))
 (define FUDGE 1e-4)
 (define INF (inf))
+(define SUBSAMPLES '((0 0) (0 1) (1 0) (1 1)))
 
 ;;; Scene
 
@@ -136,6 +144,7 @@
     0
     (begin
       (define dis (expt dis 0.5))
+      0
       (cond ((> (/ (- (- b) dis) (* 2 a)) FUDGE) (/ (- (- b) dis) (* 2 a)))
         ((> (/ (+ (- b) dis) (* 2 a)) FUDGE) (/ (+ (- b) dis) (* 2 a)))
         (else 0)
@@ -149,17 +158,78 @@
   (define (helper final_t obj scene)
     (if (null? scene)
       (list final_t obj)
-      (define t (intersect r (car scene)))
-      (if (and (< t final_t) (> t 0))
-        (helper t (car scene) (cdr scene))
+      (begin
+        (define t (intersect r (car scene)))
+        (if (and (< t final_t) (> t 0))
+          (helper t (car scene) (cdr scene))
+          (helper final_t obj (cdr scene)))
       )
     )
   )
   (helper 0 '() scene)
 )
 
+(define (tent-filter x)
+  (if (< x 1)
+    (- (expt x 0.5) 1)
+    (- 1 (expt (- 2 x) 0.5))
+  )
+)
+
+(define (clamp v)
+  (map (lambda (e) (if (> e 1) 1.0 (if (< e 0) 0 e))) v)
+)
+
+(define (render w h)
+  (render-pixel w h)
+  (if (< w WIDTH)
+    (render (+ w 1) h)
+    (if (< h HEIGHT)
+      (render 0 (+ h 1))
+    )
+  )
+)
+
+(define (render-pixel x y)
+  (define (helper subsamples-lst color)
+    (if (null? subsamples-lst) color
+      (begin
+        (define sx (car (car subsamples-lst)))
+        (define sy (car (cdr (car subsamples-lst))))
+        (define (helper2 i r)
+          (if (eq? i SAMPELS)
+            r
+            (begin
+              (define dx (tent-filter (* 2 (random))))
+              (define dy (tent-filter (* 2 (random))))
+              (define x-ratio (- (/ (+ (/ (+ sx 0.5 dx) 2) x) WIDTH) 0.5))
+              (define y-ratio (- (/ (+ (/ (+ sy 0.5 dy) 2) y) HEIGHT) 0.5))
+              (define d (add CAMERA_DIR (add (mul CX x-ratio) (mul CY y-ratio))))
+              (define o (add CAMERA_POS (mul d RAY_OFFSET)))
+              (define d (normalize d))
+              (print (mul (radiance (ray o d) 0 #t) 1))
+              (print (add r (mul (radiance (ray o d) 0 #t) (/ 1 SAMPELS))))
+              (helper2 (+ i 1) (add r (mul (radiance (ray o d) 0 #t) (/ 1 SAMPELS))))
+            )
+          )
+        )
+        (define r (clamp (helper2 0 (vector 0 0 0))))
+        ; (helper (cdr subsamples-lst) (add color (mul r (expt (/ 1 4) 2))))
+      )
+    )
+  )
+  (helper SUBSAMPLES (vector 0 0 0))
+  ; (draw-pixel x y )
+)
+
+(define (radiance r depth emissive)
+  (print (intersect_scene r scene))
+  ; (define obj )
+  ; (if (null? obj) BLACK (color obj))
+)
+
 (define (draw)
-  
+  (render 0 0)
   (exitonclick))
 
 ; Please leave this last line alone.  You may add additional procedures above

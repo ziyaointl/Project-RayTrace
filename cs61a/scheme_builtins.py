@@ -4,6 +4,7 @@ import math
 import operator
 import sys
 from scheme_reader import Pair, nil, repl_str
+from random import random
 
 try:
     import turtle
@@ -541,6 +542,15 @@ def tscheme_screen_height():
 ##
 ## Custom
 ##
+
 @builtin("inf")
 def inf():
     return float('inf')
+
+@builtin("random")
+def random1():
+    return random()
+
+@builtin("draw-pixel")
+def draw_pixel(*vals):
+    print(vals)
