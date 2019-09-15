@@ -13,6 +13,10 @@
 #define HEIGHT 200
 #define SAMPLES_PP 100
 
+float gamma_encode(float x) {
+    return pow(x, 1.0/2.2);
+}
+
 Vec3 color(const Ray &r, const Hittable &world) {
     HitRecord rec;
     if (world.hit(r, 0.0, std::numeric_limits<float>::max(), rec)) {
@@ -38,6 +42,7 @@ int main() {
     Camera cam;
 
     for (int y = HEIGHT - 1; y >= 0; --y) {
+        std::cerr << "Rendering row " << HEIGHT - y << std::endl;
         for (int x = 0; x < WIDTH; ++x) {
             Vec3 pixColor = Vec3(0, 0, 0);
             for (int i = 0; i < SAMPLES_PP; ++i) {    
@@ -46,9 +51,9 @@ int main() {
                 Ray r = cam.getRay(u, v);
                 pixColor += color(r, hList);
             }
-            //std::cout << pixColor.x() << std::endl;
             pixColor *= (1.0 / float(SAMPLES_PP)); // Average by samples per pixel
-            pixColor *= 255.99; // Scale to 256 bit RGB 
+            pixColor = Vec3(gamma_encode(pixColor.r()), gamma_encode(pixColor.g()), gamma_encode(pixColor.b()));
+            pixColor *= 255.99; // Scale to 256 bit RGB
             std::cout << int(pixColor.r()) << " " << int(pixColor.g()) << " " << int(pixColor.b()) << std::endl;
         }
     }
