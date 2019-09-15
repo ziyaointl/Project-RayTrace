@@ -1,6 +1,6 @@
 CXX=g++
-CXXFLAGS = -std=c++11 -Wall -g
-DEPS = vec3.hpp ray.hpp
+CXXFLAGS = -std=c++11 -Wall -Wextra -g
+DEPS = vec3.hpp ray.hpp sphere.hpp
 
 main: main.o
 	$(CXX) -o main $(CXXFLAGS) main.o
