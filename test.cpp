@@ -1,3 +1,4 @@
+#include <iostream>
 #include "catch.hpp"
 #include "vec3.hpp"
 #include "ray.hpp"
@@ -117,4 +118,16 @@ TEST_CASE("Element-wise Multiply") {
     Vec3 v1 = Vec3(1, 2, 3);
     Vec3 v2 = Vec3(4, 5, 6);
     CHECK(v1.elementWiseMul(v2) == Vec3(4, 10, 18));
+}
+
+TEST_CASE("Refraction") {
+    Vec3 l = Vec3(0.707107, -0.707107, 0);
+    Vec3 n = Vec3(0, 1, 0);
+    float n1 = 0.9;
+    float n2 = 1.0;
+    Vec3 r;
+    refract(l, n, n1, n2, r);    
+    CHECK(r.y() == Approx(-0.771362));
+    CHECK(r.x() == Approx(0.636396));
+    CHECK(r.z() == Approx(0.0));
 }

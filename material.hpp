@@ -46,4 +46,20 @@ class Metal : public Material {
         float fuzziness;
 };
 
+// Vector form of Snell's law
+// https://en.wikipedia.org/wiki/Snell%27s_law#Vector_form
+// Assuming v is incident ray, n is normal, and both are unit vectors
+// Returns the refracted direction
+bool refract(const Vec3 &v, const Vec3 &n, float n1, float n2, Vec3 &refracted) {
+    float r = n1 / n2;
+    float c = -n * v;
+    float discriminant = 1 - r*r*(1 - c*c);
+    if (discriminant > 0) {
+        refracted = r*v + (r*c - sqrt(discriminant)) * n;
+        return true;
+    }
+    return false;
+}
+
+
 #endif
