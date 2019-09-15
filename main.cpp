@@ -13,8 +13,8 @@
 Vec3 color(const Ray &r) {
     HitRecord rec;
     HittableList hList;
-    Hittable *s = new Sphere(Vec3(0, 0, -1), 0.5);
-    hList.hittables.push_back(s);
+    Sphere s = Sphere(Vec3(0, 0, -1), 0.5);
+    hList.hittables.push_back(&s);
     if (hList.hit(r, 0.0, std::numeric_limits<float>::max(), rec)) {
         return (rec.normal + Vec3(1, 1, 1)) * 0.5; // Scale colors
     }
