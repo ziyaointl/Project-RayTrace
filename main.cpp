@@ -25,11 +25,6 @@ Vec3 color(const Ray &r, const Hittable &world) {
 
 int main() {
     std::cout << "P3\n" << WIDTH << " " << HEIGHT << "\n255" << std::endl;
-    // These vectors are in uv space
-    const Vec3 origin = Vec3(0, 0, 0);
-    const Vec3 horizontal = Vec3(4, 0, 0);
-    const Vec3 vertical = Vec3(0, 2, 0);
-    const Vec3 lowerLeft = Vec3(-2, -1, -1);
 
     // Initialize world
     HittableList hList;
@@ -45,12 +40,13 @@ int main() {
         for (int x = 0; x < WIDTH; ++x) {
             Vec3 pixColor = Vec3(0, 0, 0);
             for (int i = 0; i < SAMPLES_PP; ++i) {    
-                float u = float(x + random_float()) / WIDTH;
-                float v = float(y + random_float()) / HEIGHT;
+                float u = float(x + random_float()) / float(WIDTH);
+                float v = float(y + random_float()) / float(HEIGHT);
                 Ray r = cam.getRay(u, v);
                 pixColor += color(r, hList);
             }
-            pixColor *= (1 / SAMPLES_PP); // Average by samples per pixel
+            //std::cout << pixColor.x() << std::endl;
+            pixColor *= (1.0 / float(SAMPLES_PP)); // Average by samples per pixel
             pixColor *= 255.99; // Scale to 256 bit RGB 
             std::cout << int(pixColor.r()) << " " << int(pixColor.g()) << " " << int(pixColor.b()) << std::endl;
         }

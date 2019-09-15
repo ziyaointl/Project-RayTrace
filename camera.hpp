@@ -6,10 +6,11 @@
 class Camera {
     public:
         Camera() = default;
-        Ray getRay(float u, float v) {
-            return Ray(origin, lowerLeft + u*horizontal + v*vertical);
+        Ray getRay(float u, float v) const {
+            return Ray(this->origin, lowerLeft + u*horizontal + v*vertical);
         }
     private:
+        // The following vectors are in u, v space
         const Vec3 origin = Vec3(0, 0, 0);
         const Vec3 horizontal = Vec3(4, 0, 0);
         const Vec3 vertical = Vec3(0, 2, 0);
