@@ -6,9 +6,12 @@
 #include "sphere.hpp"
 #include "hittable.hpp"
 #include "hittable_list.hpp"
+#include "camera.hpp"
+#include "random.hpp"
 
 #define WIDTH 400
 #define HEIGHT 200
+#define SAMPLES_PP 100
 
 Vec3 color(const Ray &r, const Hittable &world) {
     HitRecord rec;
@@ -35,12 +38,20 @@ int main() {
     hList.hittables.push_back(&s1);
     hList.hittables.push_back(&s2);
 
+    // Initialize camera
+    Camera cam;
+
     for (int y = HEIGHT - 1; y >= 0; --y) {
         for (int x = 0; x < WIDTH; ++x) {
-            float u = float(x) / WIDTH;
-            float v = float(y) / HEIGHT;
-            Ray r = Ray(origin, lowerLeft + u * horizontal + v * vertical);
-            Vec3 pixColor = color(r, hList) * 255.99;
+            Vec3 pixColor = Vec3(0, 0, 0);
+            for (int i = 0; i < SAMPLES_PP; ++i) {    
+                float u = float(x + random_float()) / WIDTH;
+                float v = float(y + random_float()) / HEIGHT;
+                Ray r = cam.getRay(u, v);
+                pixColor += color(r, hList);
+            }
+            pixColor *= (1 / SAMPLES_PP); // Average by samples per pixel
+            pixColor *= 255.99; // Scale to 256 bit RGB 
             std::cout << int(pixColor.r()) << " " << int(pixColor.g()) << " " << int(pixColor.b()) << std::endl;
         }
     }
