@@ -51,7 +51,7 @@ int main() {
     Vec3 image[HEIGHT*WIDTH];
 
     // Main render loop
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(dynamic)
     for (int y = HEIGHT - 1; y >= 0; --y) {
         std::cerr << "Rendering row " << HEIGHT - y << std::endl;
         for (int x = 0; x < WIDTH; ++x) {

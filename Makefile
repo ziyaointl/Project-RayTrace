@@ -5,7 +5,7 @@ else
 CXX=g++
 endif
 
-CXXFLAGS=-std=c++11 -Wall -Wextra -g -fopenmp -lpthread
+CXXFLAGS=-std=c++11 -Wall -Wextra -g -fopenmp -lpthread -O3
 DEPS=vec3.hpp ray.hpp sphere.hpp hittable.hpp hittable_list.hpp random.hpp camera.hpp material.hpp
 
 main: main.o
