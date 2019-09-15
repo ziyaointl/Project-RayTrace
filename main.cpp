@@ -15,8 +15,7 @@ Vec3 color(const Ray &r) {
     HittableList hList;
     Hittable *s = new Sphere(Vec3(0, 0, -1), 0.5);
     hList.hittables.push_back(s);
-    if (hList.hit(r, std::numeric_limits<float>::max(), 0.0, rec)) {
-        std::cout << "Hi" << std::endl;
+    if (hList.hit(r, 0.0, std::numeric_limits<float>::max(), rec)) {
         return (rec.normal + Vec3(1, 1, 1)) * 0.5; // Scale colors
     }
     Vec3 unit_d = normalized(r.direction);

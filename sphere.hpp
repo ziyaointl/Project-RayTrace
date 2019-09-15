@@ -13,7 +13,7 @@ class Sphere: public Hittable {
 			return normalized(pt - center);
 		}
 
-		virtual bool hit(const Ray &r, float tMax, float tMin, HitRecord &rec) const {
+		virtual bool hit(const Ray &r, float tMin, float tMax, HitRecord &rec) const {
 			Vec3 oc = r.origin - center;
 			float a = r.direction * r.direction;
 			float b = r.direction * oc;

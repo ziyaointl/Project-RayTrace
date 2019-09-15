@@ -6,7 +6,7 @@ class HittableList: public Hittable {
     public:
         HittableList() = default;
         std::vector<Hittable*> hittables;
-        virtual bool hit(const Ray &r, float tMax, float tMin, HitRecord &rec) const {
+        virtual bool hit(const Ray &r, float tMin, float tMax, HitRecord &rec) const {
             bool hitAnything = false;
             HitRecord tempRec;
             for (Hittable* hittable : hittables) {
