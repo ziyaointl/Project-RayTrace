@@ -49,7 +49,7 @@ class Metal : public Material {
 // Vector form of Snell's law
 // https://en.wikipedia.org/wiki/Snell%27s_law#Vector_form
 // Assuming v is incident ray, n is normal, and both are unit vectors
-// Returns the refracted direction
+// Returns true if not total internal reflection
 bool refract(const Vec3 &v, const Vec3 &n, float n1, float n2, Vec3 &refracted) {
     float r = n1 / n2;
     float c = -n * v;
@@ -61,5 +61,27 @@ bool refract(const Vec3 &v, const Vec3 &n, float n1, float n2, Vec3 &refracted) 
     return false;
 }
 
-
+class Dielectric : public Material {
+    public:
+        Dielectric(float refractionIndex) : refractionIndex(refractionIndex) {}
+        virtual bool scatter(const Ray &in, const HitRecord &rec, Vec3 &attenuation, Ray &scattered) const override {
+            Vec3 normal = rec.normal;
+            Vec3 refracted;
+            bool refractionSuccess= false; // true if not total internal reflection
+            if (normal * in.direction <= 0) { // Light is shining in the material
+                refractionSuccess = refract(in.direction, normal, 1.0, refractionIndex,  refracted);
+            } else { // Light is shining out of the material
+                normal = -normal;
+                refractionSuccess = refract(in.direction, normal, refractionIndex, 1.0, refracted);
+            }
+            if (refractionSuccess) { // Always return refracted ray if exists
+                scattered = Ray(rec.p, refracted);
+            } else { // Fall back to reflection
+                scattered = Ray(rec.p, reflect(in.direction, normal));
+            }
+            attenuation = Vec3(1.0, 1.0, 1.0); // Does not attenuate
+            return true;
+        }
+    float refractionIndex;
+};
 #endif
