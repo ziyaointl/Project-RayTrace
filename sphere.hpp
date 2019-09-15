@@ -2,12 +2,14 @@
 #define SPHERE_HPP
 #include "vec3.hpp"
 #include "hittable.hpp"
+#include "material.hpp"
 
 class Sphere: public Hittable {
 	public:
-		Sphere(const Vec3 &center, float radius): center(center), radius(radius) { };
+		Sphere(const Vec3 &center, float radius, Material *m): center(center), radius(radius), mat(m) { };
 		Vec3 center;
 		float radius;
+        Material *mat;
 
 		Vec3 normalAt(const Vec3 &pt) const {
 			return normalized(pt - center);
@@ -30,6 +32,7 @@ class Sphere: public Hittable {
                 rec.t = t;
                 rec.p = r.pointAt(t);
                 rec.normal = normalAt(rec.p);
+                rec.mat = mat;
                 return true;
             }
             return false;

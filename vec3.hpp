@@ -82,6 +82,10 @@ class Vec3 {
         float length() const {
             return sqrt(lengthSq());
         }
+
+        Vec3 elementWiseMul(const Vec3 &rhs) const {
+            return Vec3(x()*rhs.x(), y()*rhs.y(), z()*rhs.z());
+        }
     private:
         float elements[3] = {0.0, 0.0, 0.0};
 };

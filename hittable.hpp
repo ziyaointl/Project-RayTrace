@@ -3,9 +3,12 @@
 #include "ray.hpp"
 #include "vec3.hpp"
 
+class Material;
+
 struct HitRecord {
     float t;
     Vec3 p, normal;
+    Material *mat;
 };
 
 class Hittable {

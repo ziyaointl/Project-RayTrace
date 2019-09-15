@@ -6,7 +6,7 @@ CXX=g++
 endif
 
 CXXFLAGS=-std=c++11 -Wall -Wextra -g -fopenmp -lpthread
-DEPS=vec3.hpp ray.hpp sphere.hpp hittable.hpp hittable_list.hpp random.hpp camera.hpp
+DEPS=vec3.hpp ray.hpp sphere.hpp hittable.hpp hittable_list.hpp random.hpp camera.hpp material.hpp
 
 main: main.o
 	$(CXX) -o main $(CXXFLAGS) main.o

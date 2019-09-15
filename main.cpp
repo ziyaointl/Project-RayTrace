@@ -8,20 +8,27 @@
 #include "hittable_list.hpp"
 #include "camera.hpp"
 #include "random.hpp"
+#include "material.hpp"
 
 #define WIDTH 400
 #define HEIGHT 200
 #define SAMPLES_PP 100
+#define MAX_BOUNCES 50
 
 float gamma_encode(float x) {
     return pow(x, 1.0/2.2);
 }
 
-Vec3 color(const Ray &r, const Hittable &world) {
+Vec3 color(const Ray &r, const Hittable &world, unsigned bounces) {
     HitRecord rec;
     if (world.hit(r, 0.0001, std::numeric_limits<float>::max(), rec)) {
-        Vec3 nextTarget = rec.p + rec.normal + random_in_unit_sphere();
-        return 0.5 * color(Ray(rec.p, nextTarget - rec.p), world); // Absorbs 50% light
+        Ray scattered;
+        Vec3 attenuation;
+        if (bounces < MAX_BOUNCES && rec.mat->scatter(r, rec, attenuation, scattered)) {
+            return attenuation.elementWiseMul(color(scattered, world, bounces + 1));
+        } else {
+            return Vec3(0, 0, 0);
+        }
     }
     Vec3 unit_d = normalized(r.direction);
     float gradientParam = 0.5 * (unit_d.y() + 1.0);
@@ -30,9 +37,10 @@ Vec3 color(const Ray &r, const Hittable &world) {
 
 int main() {
     // Initialize world
+    Lambertian gray = Lambertian(Vec3(0.5, 0.5, 0.5));
     HittableList hList;
-    Sphere s1 = Sphere(Vec3(0, 0, -1), 0.5); // Sphere in the center
-    Sphere s2 = Sphere(Vec3(0, -101, -1), 100);
+    Sphere s1 = Sphere(Vec3(0, 0, -1), 0.5, &gray); // Sphere in the center
+    Sphere s2 = Sphere(Vec3(0, -100.5, -1), 100, &gray);
     hList.hittables.push_back(&s1);
     hList.hittables.push_back(&s2);
 
@@ -52,7 +60,7 @@ int main() {
                 float u = float(x + random_float()) / float(WIDTH);
                 float v = float(y + random_float()) / float(HEIGHT);
                 Ray r = cam.getRay(u, v);
-                pixColor += color(r, hList);
+                pixColor += color(r, hList, 0);
             }
             pixColor *= (1.0 / float(SAMPLES_PP)); // Average by samples per pixel
             pixColor = Vec3(gamma_encode(pixColor.r()), gamma_encode(pixColor.g()), gamma_encode(pixColor.b()));

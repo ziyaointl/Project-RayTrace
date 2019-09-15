@@ -3,6 +3,7 @@
 #include "ray.hpp"
 #include "sphere.hpp"
 #include "random.hpp"
+#include "material.hpp"
 
 TEST_CASE("Vector Creation") {
     Vec3 v = Vec3(1, 2, 3);
@@ -106,8 +107,14 @@ TEST_CASE("Dot Product") {
 }
 
 TEST_CASE("Sphere Normal") {
-    Sphere s = Sphere(Vec3(0, 0, 0), 1);
+    Lambertian filler = Lambertian(Vec3(1, 1, 1));
+    Sphere s = Sphere(Vec3(0, 0, 0), 1, &filler);
     Vec3 pt = Vec3(0, 0, 1);
     CHECK(s.normalAt(pt) == pt);    
 }
 
+TEST_CASE("Element-wise Multiply") {
+    Vec3 v1 = Vec3(1, 2, 3);
+    Vec3 v2 = Vec3(4, 5, 6);
+    CHECK(v1.elementWiseMul(v2) == Vec3(4, 10, 18));
+}
