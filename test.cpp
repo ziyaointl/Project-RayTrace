@@ -1,9 +1,8 @@
-#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
-#include <cmath>
 #include "catch.hpp"
 #include "vec3.hpp"
 #include "ray.hpp"
 #include "sphere.hpp"
+#include "random.hpp"
 
 TEST_CASE("Vector Creation") {
     Vec3 v = Vec3(1, 2, 3);
@@ -111,5 +110,4 @@ TEST_CASE("Sphere Normal") {
     Vec3 pt = Vec3(0, 0, 1);
     CHECK(s.normalAt(pt) == pt);    
 }
-
 
