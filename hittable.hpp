@@ -6,11 +6,11 @@
 struct HitRecord {
     float t;
     Vec3 p, normal;
-}
+};
 
 class Hittable {
     public:
-        virtual bool hit(const Ray &r, float minT, float maxT, HitRecord &rec) const = 0;
-}
+        virtual bool hit(const Ray &r, float tMin, float tMax, HitRecord &rec) const = 0;
+};
 
 #endif

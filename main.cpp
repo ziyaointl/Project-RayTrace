@@ -1,30 +1,19 @@
 #include <iostream>
 #include <cmath>
+#include <limits>
 #include "vec3.hpp"
 #include "ray.hpp"
 #include "sphere.hpp"
+#include "hittable.hpp"
 
 #define WIDTH 400
 #define HEIGHT 200
 
-float hit(const Sphere &s, const Ray &r) {
-    Vec3 oc = r.origin - s.center;
-    float a = r.direction * r.direction;
-    float b = 2.0 * r.direction * oc;
-    float c = oc * oc - s.radius * s.radius;
-    float discriminant = b*b - 4*a*c;
-    if (discriminant < 0) {
-        return -1;
-    }
-    return (-b - sqrt(discriminant)) / (2.0*a);
-}
-
 Vec3 color(const Ray &r) {
     Sphere s = Sphere(Vec3(0, 0, -1), 0.5);
-    float t = hit(s, r);
-    if (t > 0.0) {
-        Vec3 normal = s.normalAt(r.pointAt(t));
-        return (normal + Vec3(1, 1, 1)) * 0.5; // Scale colors
+    HitRecord rec;
+    if (s.hit(r, std::numeric_limits<float>::max(), 0.0, rec)) {
+        return (rec.normal + Vec3(1, 1, 1)) * 0.5; // Scale colors
     }
     Vec3 unit_d = normalized(r.direction);
     float gradientParam = 0.5 * (unit_d.y() + 1.0);
