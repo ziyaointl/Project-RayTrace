@@ -3,6 +3,7 @@
 #include "catch.hpp"
 #include "vec3.hpp"
 #include "ray.hpp"
+#include "sphere.hpp"
 
 TEST_CASE("Vector Creation") {
     Vec3 v = Vec3(1, 2, 3);
@@ -98,3 +99,17 @@ TEST_CASE("Vector Multiplication") {
     Vec3 v4 = 4 * v2;
     CHECK(v3 == v4);
 }
+
+TEST_CASE("Dot Product") {
+    Vec3 v1 = Vec3(1, 2, 3);
+    Vec3 v2 = Vec3(4, 5, 6);
+    CHECK(v1 * v2 == 32);
+}
+
+TEST_CASE("Sphere Normal") {
+    Sphere s = Sphere(Vec3(0, 0, 0), 1);
+    Vec3 pt = Vec3(0, 0, 1);
+    CHECK(s.normalAt(pt) == pt);    
+}
+
+
