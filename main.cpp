@@ -19,7 +19,7 @@ float gamma_encode(float x) {
 
 Vec3 color(const Ray &r, const Hittable &world) {
     HitRecord rec;
-    if (world.hit(r, 0.0, std::numeric_limits<float>::max(), rec)) {
+    if (world.hit(r, 0.0001, std::numeric_limits<float>::max(), rec)) {
         Vec3 nextTarget = rec.p + rec.normal + random_in_unit_sphere();
         return 0.5 * color(Ray(rec.p, nextTarget - rec.p), world); // Absorbs 50% light
     }
@@ -29,8 +29,6 @@ Vec3 color(const Ray &r, const Hittable &world) {
 }
 
 int main() {
-    std::cout << "P3\n" << WIDTH << " " << HEIGHT << "\n255" << std::endl;
-
     // Initialize world
     HittableList hList;
     Sphere s1 = Sphere(Vec3(0, 0, -1), 0.5); // Sphere in the center
@@ -41,6 +39,11 @@ int main() {
     // Initialize camera
     Camera cam;
 
+    // Initialize image
+    Vec3 image[HEIGHT*WIDTH];
+
+    // Main render loop
+    #pragma omp parallel for
     for (int y = HEIGHT - 1; y >= 0; --y) {
         std::cerr << "Rendering row " << HEIGHT - y << std::endl;
         for (int x = 0; x < WIDTH; ++x) {
@@ -54,6 +57,15 @@ int main() {
             pixColor *= (1.0 / float(SAMPLES_PP)); // Average by samples per pixel
             pixColor = Vec3(gamma_encode(pixColor.r()), gamma_encode(pixColor.g()), gamma_encode(pixColor.b()));
             pixColor *= 255.99; // Scale to 256 bit RGB
+            image[y * WIDTH + x] = pixColor;
+        }
+    }
+
+    // Write image to stdout
+    std::cout << "P3\n" << WIDTH << " " << HEIGHT << "\n255" << std::endl;
+    for (int y = HEIGHT - 1; y >= 0; --y) {
+        for (int x = 0; x < WIDTH; ++x) {
+            Vec3 pixColor = image[y * WIDTH + x]; 
             std::cout << int(pixColor.r()) << " " << int(pixColor.g()) << " " << int(pixColor.b()) << std::endl;
         }
     }

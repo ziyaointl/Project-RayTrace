@@ -1,5 +1,11 @@
+UNAME := $(shell uname)
+ifeq ($(UNAME), Darwin)
+CXX=g++-9
+else
 CXX=g++
-CXXFLAGS=-std=c++11 -Wall -Wextra -g
+endif
+
+CXXFLAGS=-std=c++11 -Wall -Wextra -g -fopenmp -lpthread
 DEPS=vec3.hpp ray.hpp sphere.hpp hittable.hpp hittable_list.hpp random.hpp camera.hpp
 
 main: main.o
