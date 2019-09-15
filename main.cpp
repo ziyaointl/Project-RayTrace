@@ -37,9 +37,10 @@ Vec3 color(const Ray &r, const Hittable &world, unsigned bounces) {
 
 int main() {
     // Initialize world
-    Lambertian gray = Lambertian(Vec3(0.5, 0.5, 0.5));
+    Lambertian gray = Lambertian(Vec3(0.5, 0.5, 0.8));
+    Metal m = Metal(Vec3(0.8, 0.8, 0.8), 0.5);
     HittableList hList;
-    Sphere s1 = Sphere(Vec3(0, 0, -1), 0.5, &gray); // Sphere in the center
+    Sphere s1 = Sphere(Vec3(0, 0, -1), 0.5, &m); // Sphere in the center
     Sphere s2 = Sphere(Vec3(0, -100.5, -1), 100, &gray);
     hList.hittables.push_back(&s1);
     hList.hittables.push_back(&s2);
