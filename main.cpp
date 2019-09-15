@@ -16,7 +16,8 @@
 Vec3 color(const Ray &r, const Hittable &world) {
     HitRecord rec;
     if (world.hit(r, 0.0, std::numeric_limits<float>::max(), rec)) {
-        return (rec.normal + Vec3(1, 1, 1)) * 0.5; // Scale colors
+        Vec3 nextTarget = rec.p + rec.normal + random_in_unit_sphere();
+        return 0.5 * color(Ray(rec.p, nextTarget - rec.p), world); // Absorbs 50% light
     }
     Vec3 unit_d = normalized(r.direction);
     float gradientParam = 0.5 * (unit_d.y() + 1.0);
