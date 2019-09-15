@@ -5,14 +5,18 @@
 #include "ray.hpp"
 #include "sphere.hpp"
 #include "hittable.hpp"
+#include "hittable_list.hpp"
 
 #define WIDTH 400
 #define HEIGHT 200
 
 Vec3 color(const Ray &r) {
-    Sphere s = Sphere(Vec3(0, 0, -1), 0.5);
     HitRecord rec;
-    if (s.hit(r, std::numeric_limits<float>::max(), 0.0, rec)) {
+    HittableList hList;
+    Hittable *s = new Sphere(Vec3(0, 0, -1), 0.5);
+    hList.hittables.push_back(s);
+    if (hList.hit(r, std::numeric_limits<float>::max(), 0.0, rec)) {
+        std::cout << "Hi" << std::endl;
         return (rec.normal + Vec3(1, 1, 1)) * 0.5; // Scale colors
     }
     Vec3 unit_d = normalized(r.direction);
