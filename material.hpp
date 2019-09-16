@@ -1,6 +1,7 @@
 #ifndef MATERIAL_HPP
 #define MATERIAL_HPP
 #include <cassert>
+#include <iostream>
 #include "ray.hpp"
 #include "random.hpp"
 #include "hittable.hpp"
@@ -61,24 +62,42 @@ bool refract(const Vec3 &v, const Vec3 &n, float n1, float n2, Vec3 &refracted) 
     return false;
 }
 
+// Schlick's approximation
+// https://en.wikipedia.org/wiki/Schlick%27s_approximation#cite_note-1
+// Assuming v is incident ray, n is normal, and both are unit vectors
+float reflectionProb(float cosine, float refIndex) {
+    float r0 = (1- refIndex) / (1 + refIndex);
+    r0 *= r0;
+    //std::cout << r0 + (1 - r0) * pow(1 - cos, 5) << std::endl;
+    return r0 + (1 - r0) * pow(1 - cosine, 5);
+}
+
 class Dielectric : public Material {
     public:
         Dielectric(float refractionIndex) : refractionIndex(refractionIndex) {}
         virtual bool scatter(const Ray &in, const HitRecord &rec, Vec3 &attenuation, Ray &scattered) const override {
             Vec3 normal = rec.normal;
             Vec3 refracted;
-            bool refractionSuccess= false; // true if not total internal reflection
+            float n1, n2, cosine;
+
             if (normal * in.direction <= 0) { // Light is shining in the material
-                refractionSuccess = refract(in.direction, normal, 1.0, refractionIndex,  refracted);
+                n1 = 1.0;
+                n2 = refractionIndex;
+                cosine = -in.direction * normal;
             } else { // Light is shining out of the material
                 normal = -normal;
-                refractionSuccess = refract(in.direction, normal, refractionIndex, 1.0, refracted);
+                n1 = refractionIndex;
+                n2 = 1.0;
+                cosine = refractionIndex * in.direction * rec.normal;
             }
-            if (refractionSuccess) { // Always return refracted ray if exists
+            bool refractionSuccess = refract(in.direction, normal, n1, n2, refracted);
+            // Randomly choose to refract or reflect
+            if (refractionSuccess && random_float() > reflectionProb(cosine, refractionIndex)) {
                 scattered = Ray(rec.p, refracted);
-            } else { // Fall back to reflection
+            } else {
                 scattered = Ray(rec.p, reflect(in.direction, normal));
             }
+
             attenuation = Vec3(1.0, 1.0, 1.0); // Does not attenuate
             return true;
         }
