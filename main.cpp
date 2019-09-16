@@ -10,9 +10,9 @@
 #include "random.hpp"
 #include "material.hpp"
 
-#define WIDTH 400
-#define HEIGHT 200
-#define SAMPLES_PP 100
+#define WIDTH 1000
+#define HEIGHT 2000
+#define SAMPLES_PP 500
 #define MAX_BOUNCES 50
 
 float gamma_encode(float x) {
@@ -37,16 +37,28 @@ Vec3 color(const Ray &r, const Hittable &world, unsigned bounces) {
 
 int main() {
     // Initialize world
-    Lambertian gray = Lambertian(Vec3(0.5, 0.5, 0.8));
-    Metal m = Metal(Vec3(0.8, 0.8, 0.8), 0.5);
-    Dielectric d = Dielectric(2.0);
+    Lambertian gray = Lambertian(Vec3(0.5, 0.5, 0.5));
+    Metal m = Metal(Vec3(0.8, 0.8, 0.8), 0);
+    Dielectric d = Dielectric(1.8);
     HittableList hList;
-    Sphere s1 = Sphere(Vec3(-0.5, 0, -1), 0.5, &m);
-    Sphere s2 = Sphere(Vec3(0.5, 0, -1), 0.5, &d);
-    Sphere s3 = Sphere(Vec3(0, -100.5, -1), 100, &gray);
+    Sphere s1 = Sphere(Vec3(-1, 0, -1), 0.5, &m);
+    Sphere s2 = Sphere(Vec3(1, 0, -1), 0.3, &d);
+    Sphere s3 = Sphere(Vec3(0, -1000.3, -1), 1000, &gray);
     hList.hittables.push_back(&s1);
     hList.hittables.push_back(&s2);
     hList.hittables.push_back(&s3);
+    for (int i = 0; i < 100; ++i) {
+        float mat = random_float();
+        float radius = random_float() * 0.5;
+        Vec3 location = Vec3((random_float() - 0.5) * 10 - 0.5, 0, -5 * (random_float()) - 1.0);
+        if (mat < 0.3) {
+            hList.hittables.push_back(new Sphere(location, radius, &gray));
+        } else if (mat < 0.6) {
+            hList.hittables.push_back(new Sphere(location, radius, &m));
+        } else {
+            hList.hittables.push_back(new Sphere(location, radius, &d));
+        }
+    }
 
     // Initialize camera
     Camera cam;
