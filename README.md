@@ -1,9 +1,9 @@
 # Project Raytrace
 Consists of a C++ distributed ray-tracer and a Python path-tracer.
 
-The C++ ray-tracer is based on Peter Shirley's wonderful book(s) at [https://raytracing.github.io/](https://raytracing.github.io/). Relevant files are located in the root directory.
+The C++ ray-tracer is in the root directory. It is based on Peter Shirley's wonderful book(s) at [https://raytracing.github.io/](https://raytracing.github.io/).
 
-The Python path-tracer is based on [smallpt](https://www.kevinbeason.com/smallpt/). Relevant files are in the cs61a directory.
+The Python path-tracer is in the cs61a folder. It is based on [smallpt](https://www.kevinbeason.com/smallpt/).
 
 ![Sample Output](sample.png)
 
