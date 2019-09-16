@@ -7,3 +7,22 @@ The Python path-tracer is based on [smallpt](https://www.kevinbeason.com/smallpt
 
 ![Sample Output](sample.png)
 
+### Usage
+Instructions below apply to the C++ version only.
+
+1. To compile
+```bash
+make
+```
+Note: OpenMP required
+
+2. To run
+```bash
+./main > output.ppm
+```
+
+3. (Optional) Compile and run unit tests
+```bash
+make test
+./test
+```
