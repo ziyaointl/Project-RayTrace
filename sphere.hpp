@@ -7,8 +7,9 @@
 class Sphere: public Hittable {
 	public:
 		Sphere(const Vec3 &center, float radius, Material *m): center(center), radius(radius), mat(m) { };
-		Vec3 center;
-		float radius;
+		~Sphere() = default;
+        Vec3 center;
+    	float radius;
         Material *mat;
 
 		Vec3 normalAt(const Vec3 &pt) const {
